@@ -11,7 +11,6 @@ const experiences = [
     title: "Experience 2",
     skills: ["Skill 4", "Skill 5", "Skill 6"]
   },
-  // Add more experiences as needed
 ];
 const LinkedInConnect = () => (
   

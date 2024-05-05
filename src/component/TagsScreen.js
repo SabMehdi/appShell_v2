@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
+import { useEffect } from "react";
+import data from "../data/info.json";
 const initialExperiences = [
   {
     id: "1",
@@ -28,9 +29,30 @@ const initialExperiences = [
   },
 ];
 
+
+
+
+
 const ExperienceList = () => {
-  const [experiences, setExperiences] = useState(initialExperiences);
+  const [experiences, setExperiences] = useState([]);
   const [newSkill, setNewSkill] = useState({});
+
+  useEffect(() => {
+    fetch('http://localhost:8060/api/all')
+      .then(response => response.json())
+      .then(data => {
+        const experiences = data[0].facts.map(fact => ({
+          id: fact.id,
+          title: fact.factTitle,
+          skills: fact.linkedSkills ? fact.linkedSkills.map(skill => skill.skillName) : []
+        }));
+        setExperiences(experiences);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        setExperiences([]);
+      });
+  }, []);
 
   const handleDeleteSkill = (experienceId, skillIndex) => {
     setExperiences((prev) =>
@@ -73,19 +95,20 @@ const ExperienceList = () => {
       newEndSkills.splice(destination.index, 0, removed);
       setExperiences((prev) =>
         prev.map((exp) => {
-          if (exp.id === startExperience.id) return { ...exp, skills: newStartSkills };
+          if (exp.id === startExperience.id) return { ... exp, skills: newStartSkills };
           if (exp.id === endExperience.id) return { ...exp, skills: newEndSkills };
           return exp;
         })
       );
     }
   };
- 
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="flex items-center justify-center h-screen">
         <div className="grid grid-cols-3 gap-4">
           {experiences.map((experience, index) => (
+            console.log(experience),
             <Droppable droppableId={experience.id} key={experience.id}>
               {(provided) => (
                 <div
@@ -96,7 +119,7 @@ const ExperienceList = () => {
                   <h2 className="font-bold text-lg mb-2">{experience.title}</h2>
                   <div className="skills flex flex-wrap">
                     {experience.skills.map((skill, index) => (
-                      <Draggable key={skill} draggableId={skill} index={index}>
+                      <Draggable key={`${experience.id}-${index}`} draggableId={`${experience.id}-${index}`} index={index}>
                         {(provided) => (
                           <span
                             className="skill-tag bg-blue-500 text-white py-1 px-2 pr-8 mr-2 mb-2 rounded relative"

@@ -1,0 +1,108 @@
+{
+    "userId":"mehdisaber",
+    "facts":[
+       {
+          "id":"ff22333f-0618-4c41-8496-018a22ea4d75",
+          "factTitle":"Master 2 (M2)",
+          "factType":"education",
+          "factDescription":"Education at Université Paris 8",
+          "startDate":"2023-06-30",
+          "endDate":"2024-08-31",
+          "location":"Université Paris 8",
+          "linkedSkills":[
+             {
+                "id":"2767f265-1989-4a61-ae19-f8dc03ecb8d8",
+                "skillName":"Java"
+             },
+             {
+                "id":"5823a6ba-61f0-47df-98fb-4e1fcefcf36c",
+                "skillName":"C++"
+             }
+          ]
+       },
+       {
+          "id":"f4933f4d-11aa-47fe-8f14-449cc2733bc7",
+          "factTitle":"Master 1 (M1)",
+          "factType":"education",
+          "factDescription":"Education at ESISA - École Supérieure d'Ingénierie en Sciences Appliquées",
+          "startDate":"2022-08-31",
+          "endDate":"2023-07-31",
+          "location":"ESISA - École Supérieure d'Ingénierie en Sciences Appliquées",
+          "linkedSkills":[
+             {
+                "id":"2767f265-1989-4a61-ae19-f8dc03ecb8d8",
+                "skillName":"Java"
+             },
+             {
+                "id":"5823a6ba-61f0-47df-98fb-4e1fcefcf36c",
+                "skillName":"C++"
+             }
+          ]
+       },
+       {
+          "id":"9aaeb1e6-9eb0-4007-8168-8fb3b67b1dbc",
+          "factTitle":"Licence ",
+          "factType":"education",
+          "factDescription":"Education at ESISA - École Supérieure d'Ingénierie en Sciences Appliquées",
+          "startDate":"2019-08-31",
+          "endDate":"2022-06-30",
+          "location":"ESISA - École Supérieure d'Ingénierie en Sciences Appliquées",
+          "linkedSkills":[
+             {
+                "id":"2767f265-1989-4a61-ae19-f8dc03ecb8d8",
+                "skillName":"Java"
+             },
+             {
+                "id":"5823a6ba-61f0-47df-98fb-4e1fcefcf36c",
+                "skillName":"C++"
+             }
+          ]
+       },
+       {
+          "id":"77060954-99d5-4dfc-8a6b-24724657a9fa",
+          "factTitle":"Développeur Analyste Full-Stack",
+          "factType":"experience",
+          "factDescription":"Worked at Platine Consultation",
+          "startDate":"2023-06-30",
+          "endDate":null,
+          "location":"Platine Consultation",
+          "linkedSkills":[
+             {
+                "id":"749eac85-8a00-4e70-9975-771b27205934",
+                "skillName":"Développement full-stack"
+             },
+             {
+                "id":"963a42dc-3a4e-40e0-8f3a-4096a3820cca",
+                "skillName":"C#"
+             },
+             {
+                "id":"2cc400da-2f5b-43b4-b804-f54027d15100",
+                "skillName":"NoSQL"
+             }
+          ]
+       },
+       {
+          "id":"a5b9022d-5da8-41fd-afcc-f00d8ab744f0",
+          "factTitle":"CCNA: Enterprise Networking, Security, and Automation",
+          "factType":"certification",
+          "factDescription":"Certified by Cisco",
+          "startDate":"2023-06-30",
+          "endDate":null,
+          "location":null,
+          "linkedSkills":[
+             {
+                "id":"749eac85-8a00-4e70-9975-771b27205934",
+                "skillName":"Développement full-stack"
+             },
+             {
+                "id":"963a42dc-3a4e-40e0-8f3a-4096a3820cca",
+                "skillName":"C#"
+             },
+             {
+                "id":"2cc400da-2f5b-43b4-b804-f54027d15100",
+                "skillName":"NoSQL"
+             }
+          ]
+ }
+ ]
+ }
