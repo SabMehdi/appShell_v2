@@ -3,50 +3,26 @@
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useEffect } from "react";
-import data from "../data/info.json";
-const initialExperiences = [
-  {
-    id: "1",
-    title: "Experience 1",
-    skills: ["Skill 1", "Skill 2", "Skill 3"]
-  },
-  {
-    id: "2",
-    title: "Experience 2",
-    skills: ["Skill 4", "Skill 5", "Skill 6"]
-  }, {
-    id: "3",
-    title: "Experience 3",
-    skills: ["Skill 7", "Skill 8", "Skill 9"]
-  }, {
-    id: "4",
-    title: "Experience 4",
-    skills: ["Skill 10", "Skill 11", "Skill 12"]
-  }, {
-    id: "5",
-    title: "Experience 5",
-    skills: ["Skill 13", "Skill 14", "Skill 15"]
-  },
-];
-
-
-
-
 
 const ExperienceList = () => {
   const [experiences, setExperiences] = useState([]);
   const [newSkill, setNewSkill] = useState({});
+  const [data, setData] = useState({ userId: '', facts: [] });
+  const [isModified, setIsModified] = useState(false);
 
   useEffect(() => {
     fetch('http://localhost:8060/api/all')
       .then(response => response.json())
       .then(data => {
+        console.log(data[0]);
         const experiences = data[0].facts.map(fact => ({
-          id: fact.id,
+          ...fact,
           title: fact.factTitle,
-          skills: fact.linkedSkills ? fact.linkedSkills.map(skill => skill.skillName) : []
+          linkedSkills: fact.linkedSkills ? fact.linkedSkills.map(skill => skill.skillName) : []
         }));
+        setData({ userId: data[0].userId, facts: experiences });
         setExperiences(experiences);
+        console.log(experiences);
       })
       .catch(error => {
         console.error('Error:', error);
@@ -58,21 +34,23 @@ const ExperienceList = () => {
     setExperiences((prev) =>
       prev.map((exp) =>
         exp.id === experienceId
-          ? { ...exp, skills: exp.skills.filter((_, index) => index !== skillIndex) }
+          ? { ...exp, linkedSkills: exp.linkedSkills.filter((_, index) => index !== skillIndex) }
           : exp
       )
     );
+    setIsModified(true);
   };
 
   const handleAddSkill = (experienceId) => {
     setExperiences((prev) =>
       prev.map((exp) =>
         exp.id === experienceId
-          ? { ...exp, skills: [...exp.skills, newSkill[experienceId] || ""] }
+          ? { ...exp, linkedSkills: [...exp.linkedSkills, newSkill[experienceId] || ""] }
           : exp
       )
     );
     setNewSkill({ ...newSkill, [experienceId]: "" });
+    setIsModified(true);
   };
   const handleDragEnd = (result) => {
     if (!result.destination) return;
@@ -82,33 +60,60 @@ const ExperienceList = () => {
     const startExperience = experiences.find((exp) => exp.id === source.droppableId);
     const endExperience = experiences.find((exp) => exp.id === destination.droppableId);
 
-    const newStartSkills = Array.from(startExperience.skills);
+    const newStartSkills = Array.from(startExperience.linkedSkills);
     const [removed] = newStartSkills.splice(source.index, 1);
 
     if (startExperience === endExperience) {
       newStartSkills.splice(destination.index, 0, removed);
       setExperiences((prev) =>
-        prev.map((exp) => (exp.id === startExperience.id ? { ...exp, skills: newStartSkills } : exp))
+        prev.map((exp) => (exp.id === startExperience.id ? { ...exp, linkedSkills: newStartSkills } : exp))
       );
     } else {
-      const newEndSkills = Array.from(endExperience.skills);
+      const newEndSkills = Array.from(endExperience.linkedSkills);
       newEndSkills.splice(destination.index, 0, removed);
       setExperiences((prev) =>
         prev.map((exp) => {
-          if (exp.id === startExperience.id) return { ... exp, skills: newStartSkills };
-          if (exp.id === endExperience.id) return { ...exp, skills: newEndSkills };
+          if (exp.id === startExperience.id) return { ...exp, linkedSkills: newStartSkills };
+          if (exp.id === endExperience.id) return { ...exp, linkedSkills: newEndSkills };
           return exp;
         })
       );
     }
   };
 
+  const handleSubmit = () => {
+    if (!isModified) return;
+  
+    const transformedExperiences = experiences.map(exp => ({
+      ...exp,
+      linkedSkills: exp.linkedSkills.map(skillName => ({ skillName }))
+    }));
+  
+    const dataToSend = {
+      facts: transformedExperiences,
+      userId: data.userId
+    };
+  
+    console.log(dataToSend);
+    fetch('http://localhost:8060/api/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dataToSend)
+    })
+    .then(response => response.json())
+    .catch(error => console.error('Error:', error));
+  
+    setIsModified(false);
+  };
   return (
+    
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="flex items-center justify-center h-screen">
         <div className="grid grid-cols-3 gap-4">
           {experiences.map((experience, index) => (
-            console.log(experience),
+
             <Droppable droppableId={experience.id} key={experience.id}>
               {(provided) => (
                 <div
@@ -118,7 +123,7 @@ const ExperienceList = () => {
                 >
                   <h2 className="font-bold text-lg mb-2">{experience.title}</h2>
                   <div className="skills flex flex-wrap">
-                    {experience.skills.map((skill, index) => (
+                    {experience.linkedSkills.map((skill, index) => (
                       <Draggable key={`${experience.id}-${index}`} draggableId={`${experience.id}-${index}`} index={index}>
                         {(provided) => (
                           <span
@@ -154,12 +159,24 @@ const ExperienceList = () => {
                       Add Skill
                     </button>
                   </div>
+
                 </div>
               )}
             </Droppable>
+
           ))}
+
         </div>
+        {isModified && 
+        <button
+          className="bg-blue-500 text-white px-2 py-1 rounded"
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
+}
       </div>
+
     </DragDropContext>
   );
 };
