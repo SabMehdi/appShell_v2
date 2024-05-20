@@ -8,20 +8,22 @@ const ExperienceList = () => {
   const [newSkill, setNewSkill] = useState({});
   const [data, setData] = useState({ userId: '', facts: [] });
   const [isModified, setIsModified] = useState(false);
-  const [tags, setTags] = useState(['ReactJs', 'Tailwind CSS', 'TypeScript', 'Ruby', 'C++']);
+  const [tags, setTags] = useState(['ReactJs', 'Tailwind CSS', 'TypeScript', 'Ruby', 'C++', 'C#', 'Python']);
+  const [initialExperiences, setInitialExperiences] = useState([]);
 
   useEffect(() => {
     fetch('http://localhost:8060/api/all')
       .then(response => response.json())
       .then(data => {
         console.log(data[0]);
-        const experiences = data[1].facts.map(fact => ({
+        const experiences = data[0].facts.map(fact => ({
           ...fact,
           title: fact.factTitle,
           linkedSkills: fact.linkedSkills ? fact.linkedSkills.map(skill => skill.skillName) : []
         }));
         setData({ userId: data[0].userId, facts: experiences });
         setExperiences(experiences);
+        setInitialExperiences(experiences);
         console.log(experiences);
       })
       .catch(error => {
@@ -102,6 +104,10 @@ const ExperienceList = () => {
     }
   };
 
+  const handleCancel = () => {
+    setNewSkill({});
+    setExperiences(initialExperiences)
+  };
   const handleSubmit = () => {
     if (!isModified) return;
 
@@ -139,63 +145,63 @@ const ExperienceList = () => {
   return (
 
     <DragDropContext onDragEnd={handleDragEnd}>
-    <div className="flex flex-col h-screen items-center justify-center">
-      <div className="flex h-3/4 overflow-y-auto">
-        <div className="w-1/2 h-full flex flex-col overflow-y-auto">
-          {experiences.map((experience, index) => (
-            <Droppable droppableId={experience.id} key={experience.id}>
-            {(provided) => (
-              <div
-                className="experience bg-gray-100 p-4 rounded-md mb-4"
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                <h2 className="font-bold text-lg mb-2">{experience.title}</h2>
-                <div className="skills flex flex-wrap">
-                  {experience.linkedSkills.map((skill, index) => (
-                    <Draggable key={`${experience.id}-${index}`} draggableId={`${experience.id}-${index}`} index={index}>
-                      {(provided) => (
-                        <span
-                          className="skill-tag bg-blue-500 text-white py-1 px-2 pr-8 mr-2 mb-2 rounded relative"
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          {skill}
-                          <button
-                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center"
-                            onClick={() => handleDeleteSkill(experience.id, index)}
-                          >
-                            x
-                          </button>
-                        </span>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-                <div className="add-skill mt-2">
-                  <input
-                    type="text"
-                    className="border-2 border-gray-300 rounded px-2 py-1 mr-2"
-                    value={newSkill[experience.id] || ""}
-                    onChange={(e) => setNewSkill({ ...newSkill, [experience.id]: e.target.value })}
-                  />
-                  <button
-                    className="bg-green-500 text-white px-2 py-1 rounded"
-                    onClick={() => handleAddSkill(experience.id)}
+      <div className="flex flex-col h-screen items-center justify-center">
+        <div className="flex h-3/4 overflow-y-auto">
+          <div className="w-full h-full flex flex-col overflow-y-auto">
+            {experiences.map((experience, index) => (
+              <Droppable droppableId={experience.id} key={experience.id}>
+                {(provided) => (
+                  <div
+                    className="experience bg-gray-100 p-4 rounded-md mb-4"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
                   >
-                    Add Skill
-                  </button>
-                </div>
-              </div>
-            )}
-          </Droppable>
-          ))}
-        </div>
-  
-        <div className="w-1/2 h-full overflow-y-auto p-4">
-        <Droppable droppableId="tagList">
+                    <h2 className="font-bold text-lg mb-2">{experience.title}</h2>
+                    <div className="skills flex flex-wrap">
+                      {experience.linkedSkills.map((skill, index) => (
+                        <Draggable key={`${experience.id}-${index}`} draggableId={`${experience.id}-${index}`} index={index}>
+                          {(provided) => (
+                            <span
+                              className="skill-tag bg-blue-500 text-white py-1 px-2 pr-8 mr-2 mb-2 rounded relative"
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
+                              {skill}
+                              <button
+                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center"
+                                onClick={() => handleDeleteSkill(experience.id, index)}
+                              >
+                                x
+                              </button>
+                            </span>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                    <div className="add-skill mt-2">
+                      <input
+                        type="text"
+                        className="border-2 border-gray-300 rounded px-2 py-1 mr-2"
+                        value={newSkill[experience.id] || ""}
+                        onChange={(e) => setNewSkill({ ...newSkill, [experience.id]: e.target.value })}
+                      />
+                      <button
+                        className="bg-green-500 text-white px-2 py-1 rounded"
+                        onClick={() => handleAddSkill(experience.id)}
+                      >
+                        Add Skill
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </Droppable>
+            ))}
+          </div>
+
+          <div className="w-full h-full overflow-y-auto p-4">
+            <Droppable droppableId="tagList">
               {(provided) => (
                 <div
                   className="tag-list bg-gray-100 p-4 rounded-md mb-4"
@@ -220,19 +226,21 @@ const ExperienceList = () => {
                 </div>
               )}
             </Droppable>
+          </div>
+        </div>
+        <div className="flex justify-center w-full p-4">
+          <div className="w-3/4 flex justify-between mr-80 ml-80">
+            <button className="bg-blue-50 text-blue-500 border-blue-500 border px-4 py-2 rounded w-1/6" onClick={handleCancel}>
+              Cancel
+            </button>
+            <button className="bg-blue-500 text-white px-4 py-2 rounded w-1/6" onClick={handleSubmit}>
+              Confirm
+            </button>
+          </div>
         </div>
       </div>
-  
-      <div className="flex justify-center w-full p-4">
-        {isModified && (
-          <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleSubmit}>
-            Save
-          </button>
-        )}
-      </div>
-    </div>
-  </DragDropContext>
-    
+    </DragDropContext>
+
   );
 };
 
